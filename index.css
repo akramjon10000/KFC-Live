@@ -1,0 +1,66 @@
+/* KFC Voice AI Delivery - Main Styles */
+
+/* Base styles already handled by Tailwind CDN */
+/* This file is for additional custom styles */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Body defaults */
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Telegram WebApp viewport fix */
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Prevent text selection on buttons */
+button {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Fix for iOS input zoom */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Hide scrollbar but allow scroll */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* KFC brand colors */
+:root {
+  --kfc-red: #E4002B;
+  --kfc-dark: #1D1D1B;
+  --kfc-cream: #F5F5DC;
+}
