@@ -6,8 +6,12 @@ Bu bot veb ilovani Telegram Mini App sifatida ochadi
 import os
 import json
 import logging
+from dotenv import load_dotenv
 from telegram import Update, WebAppInfo, InlineKeyboardButton, InlineKeyboardMarkup, MenuButtonWebApp
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Logging
 logging.basicConfig(
@@ -18,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://your-app.onrender.com')  # Deploy qilingan URL
+WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://kfc-live.onrender.com')
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start buyrug'i - Mini App ni ochish"""
