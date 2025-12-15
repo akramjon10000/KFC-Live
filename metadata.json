@@ -1,0 +1,8 @@
+{
+  "name": "KFC Voice AI Delivery",
+  "description": "A KFC-styled food delivery application featuring a real-time Gemini Live voice assistant for ordering.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ]
+}
