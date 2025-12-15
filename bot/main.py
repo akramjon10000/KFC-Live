@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://kfc-live.onrender.com')
+WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://kfc-live-nwzj.onrender.com')
 PORT = int(os.getenv('PORT', 10000))
 
 # Simple HTTP Handler for health checks

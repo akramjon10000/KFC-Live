@@ -34,6 +34,6 @@ services:
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: WEBAPP_URL
-        value: https://kfc-live.onrender.com
+        value: https://kfc-live-nwzj.onrender.com
       - key: PORT
         value: "10000"
