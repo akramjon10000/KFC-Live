@@ -60,19 +60,28 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start buyrug'i - Mini App ni ochish"""
     user = update.effective_user
     
-    keyboard = [[
-        InlineKeyboardButton(
-            text="🍗 Buyurtma berish",
-            web_app=WebAppInfo(url=WEBAPP_URL)
-        )
-    ]]
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                text="🍗 Buyurtma berish (App)",
+                web_app=WebAppInfo(url=WEBAPP_URL)
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="🌐 Brauzerda ochish",
+                url=WEBAPP_URL
+            )
+        ]
+    ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     await update.message.reply_html(
         f"Salom, {user.mention_html()}! 👋\n\n"
         f"🍗 <b>KFC O'zbekiston</b>ga xush kelibsiz!\n\n"
-        f"Mazali tovuq taomlarimizni buyurtma qilish uchun quyidagi tugmani bosing.\n\n"
-        f"🎤 <i>AI ovozli yordamchi bilan gapiring!</i>",
+        f"Mazali tovuq taomlarimizni buyurtma qilish uchun quyidagi tugmalardan birini bosing.\n\n"
+        f"🎤 <i>AI ovozli yordamchi bilan gapiring!</i>\n\n"
+        f"📱 <b>Sayt:</b> {WEBAPP_URL}",
         reply_markup=reply_markup
     )
 
