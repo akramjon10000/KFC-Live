@@ -24,8 +24,8 @@ services:
         source: /*
         destination: /index.html
 
-  # Background Worker - Telegram Bot
-  - type: worker
+  # Web Service - Telegram Bot (FREE tier compatible)
+  - type: web
     name: kfc-live-bot
     runtime: docker
     dockerfilePath: ./bot/Dockerfile
@@ -35,3 +35,5 @@ services:
         sync: false
       - key: WEBAPP_URL
         value: https://kfc-live.onrender.com
+      - key: PORT
+        value: "10000"

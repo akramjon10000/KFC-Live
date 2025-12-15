@@ -1,11 +1,14 @@
 """
 KFC Voice AI Delivery - Telegram Bot
 Bu bot veb ilovani Telegram Mini App sifatida ochadi
+Render.com Web Service uchun HTTP server bilan
 """
 
 import os
 import json
 import logging
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from dotenv import load_dotenv
 from telegram import Update, WebAppInfo, InlineKeyboardButton, InlineKeyboardMarkup, MenuButtonWebApp
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
@@ -23,6 +26,35 @@ logger = logging.getLogger(__name__)
 # Configuration
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://kfc-live.onrender.com')
+PORT = int(os.getenv('PORT', 10000))
+
+# Simple HTTP Handler for health checks
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.end_headers()
+        response = """
+        <!DOCTYPE html>
+        <html>
+        <head><title>KFC Bot</title></head>
+        <body style="font-family: Arial; text-align: center; padding: 50px;">
+            <h1>🍗 KFC Voice AI Bot</h1>
+            <p>✅ Bot ishlayapti!</p>
+            <p>Telegram: <a href="https://t.me/your_bot_username">@your_bot_username</a></p>
+        </body>
+        </html>
+        """
+        self.wfile.write(response.encode())
+    
+    def log_message(self, format, *args):
+        pass  # Suppress HTTP logs
+
+def run_http_server():
+    """HTTP server for Render health checks"""
+    server = HTTPServer(('0.0.0.0', PORT), HealthHandler)
+    logger.info(f"Health check server running on port {PORT}")
+    server.serve_forever()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start buyrug'i - Mini App ni ochish"""
@@ -83,7 +115,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         logger.info(f"WebApp data received: {data}")
         
         if data.get('action') == 'order':
-            # Buyurtma ma'lumotlarini qayta ishlash
             items = data.get('items', [])
             total = data.get('total', 0)
             address = data.get('address', 'Noma\'lum')
@@ -100,14 +131,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 f"🚗 Yetkazib berish vaqti: 25-40 daqiqa\n\n"
                 f"<i>Rahmat! Mazzali bo'lsin! 🍗</i>"
             )
-            
-            # Admin ga xabar yuborish (optional)
-            # admin_chat_id = os.getenv('ADMIN_CHAT_ID')
-            # if admin_chat_id:
-            #     await context.bot.send_message(
-            #         chat_id=admin_chat_id,
-            #         text=f"🆕 Yangi buyurtma!\n\n{items_text}\nJami: {total:,} so'm"
-            #     )
         else:
             await update.message.reply_text(f"Ma'lumot qabul qilindi: {data}")
             
@@ -129,18 +152,25 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 async def post_init(application: Application) -> None:
     """Bot ishga tushganda Menu Button o'rnatish"""
-    await application.bot.set_chat_menu_button(
-        menu_button=MenuButtonWebApp(
-            text="🍗 Buyurtma",
-            web_app=WebAppInfo(url=WEBAPP_URL)
+    try:
+        await application.bot.set_chat_menu_button(
+            menu_button=MenuButtonWebApp(
+                text="🍗 Buyurtma",
+                web_app=WebAppInfo(url=WEBAPP_URL)
+            )
         )
-    )
+    except Exception as e:
+        logger.warning(f"Could not set menu button: {e}")
 
 def main() -> None:
     """Botni ishga tushirish"""
     if not BOT_TOKEN:
         logger.error("TELEGRAM_BOT_TOKEN environment variable not set!")
         return
+    
+    # Start HTTP server in background thread for Render health checks
+    http_thread = threading.Thread(target=run_http_server, daemon=True)
+    http_thread.start()
     
     # Application yaratish
     application = Application.builder().token(BOT_TOKEN).post_init(post_init).build()
